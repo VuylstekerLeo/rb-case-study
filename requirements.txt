@@ -1,0 +1,5 @@
+pyspark==3.4.1
+typedspark==1.4.4
+pylint>=2.16.2
+pytest>=7.4.3
+pytest-cov>=4.1.0
