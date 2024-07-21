@@ -28,32 +28,47 @@ def test_etl(spark: SparkSession) -> None:
         spark,
         PlayerExtra,
         {
-            PlayerExtra.provider_id: [1],
-            PlayerExtra.player_name: ["John"],
-            PlayerExtra.first_name: ["John"],
-            PlayerExtra.last_name: ["John"],
-            PlayerExtra.date_of_birth: [date(1998, 9, 12)],
-            PlayerExtra.gender: ["male"],
-            PlayerExtra.country: ["France"],
-            PlayerExtra.nickname: ["Johnny"],
-            PlayerExtra.jersey_number: [10],
-            PlayerExtra.nationality: ["France"]
+            PlayerExtra.provider_id: [57071, 412372],
+            PlayerExtra.player_name: ["Peter Gulacsi", "Lucas Alexandre Galdino de Azevedo"],
+            PlayerExtra.first_name: ["Peter", None],
+            PlayerExtra.last_name: ["Gulacsi", None],
+            PlayerExtra.date_of_birth: [date(1990, 5, 6), date(2001, 2, 26)],
+            PlayerExtra.gender: ["male", "male"],
+            PlayerExtra.country: ["Hungary", "Brazil"],
+            PlayerExtra.nickname: [None, "Lucao"],
+            PlayerExtra.jersey_number: [1, 40],
+            PlayerExtra.nationality: ["Hungary", "Brazil"]
         }
     )
 
-    provider_2 = provider_1
+    provider_2 = create_partially_filled_dataset(
+        spark,
+        PlayerExtra,
+        {
+            PlayerExtra.provider_id: [57071, 412372],
+            PlayerExtra.player_name: ["Peter Gulacsi", "Lucas Galdino de Azevedo"],
+            PlayerExtra.first_name: ["Peter", "Lucas Alexandre"],
+            PlayerExtra.last_name: ["Gulacsi", "Galdino de Azevedo"],
+            PlayerExtra.date_of_birth: [date(1990, 5, 6), date(2001, 2, 26)],
+            PlayerExtra.gender: ["male", "male"],
+            PlayerExtra.country: ["Hungary", "Brazil"],
+            PlayerExtra.nickname: [None, "Lucao"],
+            PlayerExtra.jersey_number: [None, None],
+            PlayerExtra.nationality: ["Hungary", "Brazil"]
+        }
+    )
 
     provider_3 = create_partially_filled_dataset(
         spark,
         Player,
         {
-            Player.provider_id: [1],
-            Player.player_name: ["John"],
-            Player.first_name: ["John"],
-            Player.last_name: ["John"],
-            Player.date_of_birth: [date(1998, 9, 12)],
-            Player.gender: ["male"],
-            Player.country: ["France"]
+            Player.provider_id: [1, 10],
+            Player.player_name: ["Peter Gulacsi", "Craig Dawson"],
+            Player.first_name: ["Peter", "Creg"],
+            Player.last_name: ["Gulasci", "Dawson"],
+            Player.date_of_birth: [date(1990, 5, 6), date(1990, 5, 6)],
+            Player.gender: ["male", "Male"],
+            Player.country: ["Hungary", "England"]
         }
     )
 
@@ -76,4 +91,5 @@ def test_etl(spark: SparkSession) -> None:
     )
     """)
     etl(spark)
-    assert spark.table("silver.player_id_table").count() == 1
+    spark.table("silver.player_id_table").show(vertical=True, truncate=False)
+    assert spark.table("silver.player_id_table").count() == 3

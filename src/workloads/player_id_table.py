@@ -54,12 +54,14 @@ def blend_players(provider_1: DataSet[PlayerExtra], provider_2: DataSet[PlayerEx
         Blended DataFrame with column global_player_id, provider_1 and provider_2
     """
     # join DataSets together
+    score = lambda a, b: \
+        f"abs(greatest(length({a}), length({b})) - levenshtein({a},{b})) / greatest(length({a}), length({b}))"
     joined_df = (
         provider_1.alias("provider_1")
         .join(
             provider_2.alias("provider_2"),
             on=func.expr(
-                "(provider_1.player_name=provider_2.player_name) "
+                f"({score('provider_1.player_name', 'provider_2.player_name')} > 0.5) "
                 "AND (provider_1.date_of_birth=provider_2.date_of_birth)"
             ),
             how="full"
@@ -67,9 +69,9 @@ def blend_players(provider_1: DataSet[PlayerExtra], provider_2: DataSet[PlayerEx
         .join(
             provider_3.alias("provider_3"),
             on=func.expr(
-                "((provider_1.player_name=provider_3.player_name) "
+                f"(({score('provider_1.player_name', 'provider_3.player_name')} > 0.5) "
                 "AND (provider_1.date_of_birth=provider_3.date_of_birth)) "
-                "OR ((provider_2.player_name=provider_3.player_name) "
+                f"OR (({score('provider_2.player_name', 'provider_3.player_name')} > 0.5) "
                 "AND (provider_2.date_of_birth=provider_3.date_of_birth))"
             ),
             how="full"
