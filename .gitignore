@@ -11,3 +11,4 @@ coverage.xml
 .coverage
 derby.log
 data/
+.ipynb_checkpoints/
