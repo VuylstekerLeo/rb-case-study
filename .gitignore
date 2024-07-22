@@ -1,0 +1,14 @@
+.idea/
+venv/
+metastore_db/
+spark-warehouse/
+src/workloads/*.log
+*.pyc
+.pytest_cache/
+junit/
+htmlcov/
+coverage.xml
+.coverage
+derby.log
+data/
+.ipynb_checkpoints/
